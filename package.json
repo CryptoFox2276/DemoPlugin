@@ -1,0 +1,17 @@
+{
+  "name": "demoplugin",
+  "version": "0.0.1",
+  "description": "",
+  "cordova": {
+    "id": "demoplugin",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "jstopcoder",
+  "license": "ISC"
+}
