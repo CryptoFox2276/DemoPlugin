@@ -46,12 +46,16 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
-        ConnectionConfig config = new ConnectionConfig();
-        config.setConnectionMode(ConnectionModes.TCP_IP);
-        config.setPort(port);
-        config.setIpAddress(ip);
-        config.setTimeout(10);
-        this._device = DeviceService.create(config);
-        callbackContext.success("InitializeConnection");
+        try {
+            ConnectionConfig config = new ConnectionConfig();
+            config.setConnectionMode(ConnectionModes.TCP_IP);
+            config.setPort(port);
+            config.setIpAddress(ip);
+            config.setTimeout(10);
+            this._device = DeviceService.create(config);
+            callbackContext.success("InitializeConnection");
+        } catch(Exception e) {
+            callbackContext.error(e.getMessage());
+        }
     }
 }
