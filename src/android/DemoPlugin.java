@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import configuration.ConnectionConfig;
+import configuration.DeviceSevice;
+
+
 /**
  * This class echoes a string called from JavaScript.
  */
@@ -19,6 +23,11 @@ public class DemoPlugin extends CordovaPlugin {
             this.coolMethod(message, callbackContext);
             return true;
         }
+        if (action.equals("initializeConnection")) {
+            String ip = args.getString(0);
+            String port = args.getString(1);
+            this.initializeConnection(ip, port, callbackContext);
+        }
         return false;
     }
 
@@ -28,5 +37,9 @@ public class DemoPlugin extends CordovaPlugin {
         } else {
             callbackContext.error("Expected one non-empty string argument.");
         }
+    }
+
+    private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
+        callbackContext.success("InitialzeConnection");
     }
 }
