@@ -10,11 +10,17 @@ import org.json.JSONObject;
 import configuration.ConnectionConfig;
 import configuration.DeviceSevice;
 
+import abstractions.IDeviceInterface;
+import entities.enums.ConnectionModes;
+
+
 
 /**
  * This class echoes a string called from JavaScript.
  */
 public class DemoPlugin extends CordovaPlugin {
+
+    IDeviceInterface _device;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -40,6 +46,12 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
+        ConnectionConfig confg = new ConnectionConfg();
+        config.setConnectionMode(ConnectionModes.TCP_IP);
+        config.setPort(port);
+        config.setIpAddress(ip);
+        config.setTimeout(10);
+        this._device = DeviceService.create(config);
         callbackContext.success("InitialzeConnection");
     }
 }
