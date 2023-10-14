@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import configuration.ConnectionConfig;
-import configuration.DeviceSevice;
+import configuration.DeviceService;
 
 import abstractions.IDeviceInterface;
 import entities.enums.ConnectionModes;
