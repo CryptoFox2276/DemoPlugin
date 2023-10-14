@@ -46,7 +46,7 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
-        ConnectionConfig config = new ConnectionConfg();
+        ConnectionConfig config = new ConnectionConfig();
         config.setConnectionMode(ConnectionModes.TCP_IP);
         config.setPort(port);
         config.setIpAddress(ip);
