@@ -72,7 +72,7 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeEventListener() {
-        NucleusEvents.setOnMessageSent(new IMessageReceivedInterface() {
+        NucleusEvents.setOnMessageSent(new IMessageSentInterface() {
             @Override
             public void messageSent(String s) {
                 this._rawMessage += formatString(s);
