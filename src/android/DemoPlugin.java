@@ -75,7 +75,7 @@ public class DemoPlugin extends CordovaPlugin {
         NucleusEvents.setOnMessageSent(new IMessageSentInterface() {
             @Override
             public void messageSent(String s) {
-                this._rawMessage += formatString(s);
+                this._rawMessage += this.formatString(s);
             }
         });
     }
