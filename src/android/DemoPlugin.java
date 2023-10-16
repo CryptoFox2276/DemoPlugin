@@ -39,6 +39,7 @@ public class DemoPlugin extends CordovaPlugin {
             String ip = args.getString(0);
             String port = args.getString(1);
             this.initializeConnection(ip, port, callbackContext);
+            return true;
         }
         return false;
     }

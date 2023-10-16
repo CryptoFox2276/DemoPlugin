@@ -4,6 +4,6 @@ exports.coolMethod = function (arg0, success, error) {
     exec(success, error, 'DemoPlugin', 'coolMethod', [arg0]);
 };
 
-exports.initializeConnection = function(arg0, success, error) {
-    exec(success, error, 'DemoPlugin', 'initializeConnection', [arg0]);
+exports.initializeConnection = function(arg0, arg1, success, error) {
+    exec(success, error, 'DemoPlugin', 'initializeConnection', [arg0, arg1]);
 }
