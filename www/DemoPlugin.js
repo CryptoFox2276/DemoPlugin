@@ -7,3 +7,7 @@ exports.coolMethod = function (arg0, success, error) {
 exports.initializeConnection = function(arg0, arg1, success, error) {
     exec(success, error, 'DemoPlugin', 'initializeConnection', [arg0, arg1]);
 }
+
+exports.saleTransaction = function(arg0, success, error) {
+    exec(success, error, 'DemoPlugin', 'saleTransaction', [arg0]);
+}

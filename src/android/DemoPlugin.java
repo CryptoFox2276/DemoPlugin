@@ -28,6 +28,9 @@ public class DemoPlugin extends CordovaPlugin {
     private String _rawMessage = "";
     private boolean _isConnected = false;
 
+    private Long _requestId = 0;
+    private String _ecrId = "1";
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("coolMethod")) {
@@ -39,6 +42,11 @@ public class DemoPlugin extends CordovaPlugin {
             String ip = args.getString(0);
             String port = args.getString(1);
             this.initializeConnection(ip, port, callbackContext);
+            return true;
+        }
+        if(action.equals("saleTransaction")) {
+            String _baseAmount = args.getString(0);
+            this.saleTransaction(_baseAmount, callbackContext);
             return true;
         }
         return false;
@@ -60,7 +68,7 @@ public class DemoPlugin extends CordovaPlugin {
             config.setIpAddress(ip);
             config.setTimeout(10);
             this._device = DeviceService.create(config);
-            if(_device == null) {
+            if(this._device == null) {
                 this._isConnected = false;
                 callbackContext.error("Failed connecting");
             }
@@ -79,6 +87,19 @@ public class DemoPlugin extends CordovaPlugin {
                 _rawMessage += formatString(s);
             }
         });
+    }
+
+    private void saleTransaction(String _baseAmount, CallbackContext callbackContext) {
+        if(!this._isConnected) {
+            return callbackContext.error("Not connected");
+        }
+        try {
+            ISaleResponse response = this._device.sale(_baseAmount).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            this._requestId ++;
+            callbackContext.success("Sent successfully");
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
     }
 
     private String formatString(String text) {
