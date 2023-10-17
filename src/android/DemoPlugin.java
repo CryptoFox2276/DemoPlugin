@@ -33,7 +33,7 @@ public class DemoPlugin extends CordovaPlugin {
     private String _rawMessage = "";
     private boolean _isConnected = false;
 
-    private int _requestId = 0;
+    private Long _requestId = 0L;
     private String _ecrId = "1";
 
     @Override
