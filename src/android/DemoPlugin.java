@@ -1,6 +1,9 @@
 package demoplugin;
 
 import org.apache.cordova.CordovaPlugin;
+
+import java.math.BigDecimal;
+
 import org.apache.cordova.CallbackContext;
 
 import org.json.JSONArray;
@@ -15,6 +18,8 @@ import events.IMessageSentInterface;
 import terminals.NucleusEvents;
 
 import abstractions.IDeviceInterface;
+import abstractions.ISaleResponse;
+
 import entities.enums.ConnectionModes;
 
 
@@ -28,7 +33,7 @@ public class DemoPlugin extends CordovaPlugin {
     private String _rawMessage = "";
     private boolean _isConnected = false;
 
-    private Long _requestId = 0;
+    private int _requestId = 0;
     private String _ecrId = "1";
 
     @Override
@@ -43,7 +48,7 @@ public class DemoPlugin extends CordovaPlugin {
             JSONObject obj = new JSONObject(param);
             String ip = obj.getString("_sIp");
             String port = obj.getString("_sPort");
-            
+
             this.initializeConnection(ip, port, callbackContext);
             return true;
         }
@@ -94,10 +99,11 @@ public class DemoPlugin extends CordovaPlugin {
 
     private void saleTransaction(String _baseAmount, CallbackContext callbackContext) {
         if(!this._isConnected) {
-            return callbackContext.error("Not connected");
+            callbackContext.error("Not connected");
+            return;
         }
         try {
-            ISaleResponse response = this._device.sale(_baseAmount).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
             callbackContext.success("Sent successfully");
         } catch (Exception e) {
