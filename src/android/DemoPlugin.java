@@ -69,6 +69,10 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
+        if (this._isConnected) {
+            callbackContext.success("Connected already");
+            return;
+        }
         try {
             ConnectionConfig config = new ConnectionConfig();
             config.setConnectionMode(ConnectionModes.TCP_IP);
@@ -79,9 +83,10 @@ public class DemoPlugin extends CordovaPlugin {
             if(this._device == null) {
                 this._isConnected = false;
                 callbackContext.error("Failed connecting");
+            } else {
+                this._isConnected = true;
+                callbackContext.success("Connected successfully");
             }
-            this._isConnected = true;
-            callbackContext.success("Connected successfully");
         } catch(Exception e) {
             this._isConnected = false;
             callbackContext.error(e.getMessage());
