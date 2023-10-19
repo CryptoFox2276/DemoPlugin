@@ -71,10 +71,6 @@ public class DemoPlugin extends CordovaPlugin {
     }
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
-        if (this._isConnected) {
-            callbackContext.success("Connected already");
-            return;
-        }
         try {
             ConnectionConfig config = new ConnectionConfig();
             config.setConnectionMode(ConnectionModes.TCP_IP);
