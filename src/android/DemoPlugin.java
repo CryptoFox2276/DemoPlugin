@@ -53,7 +53,9 @@ public class DemoPlugin extends CordovaPlugin {
             return true;
         }
         if(action.equals("saleTransaction")) {
-            String _baseAmount = args.getString(0);
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _baseAmount = obj.getString("_sBaseAmount");
             this.saleTransaction(_baseAmount, callbackContext);
             return true;
         }
