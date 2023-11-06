@@ -59,6 +59,14 @@ public class DemoPlugin extends CordovaPlugin {
             this.saleTransaction(_baseAmount, callbackContext);
             return true;
         }
+        if(action.equals("saleTransactionWithTip")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _baseAmount = obj.getString("_sBaseAmount");
+            String _tipAmount = obj.getString("_sTipAmount");
+            this.saleTransactionWithTip(_baseAmount, _tipAmount, callbackContext);
+            return true;
+        }
         return false;
     }
 
@@ -107,6 +115,20 @@ public class DemoPlugin extends CordovaPlugin {
         }
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            this._requestId ++;
+            callbackContext.success("Sent successfully");
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    private void saleTransactionWithTip(String _baseAmount, String _tipAmount, CallbackContext callbackContext) {
+        if(!this._isConnected) {
+            callbackContext.error("Not connected");
+            return;
+        }
+        try {
+            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).WithTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
             callbackContext.success("Sent successfully");
         } catch (Exception e) {
