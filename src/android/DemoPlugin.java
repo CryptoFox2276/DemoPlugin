@@ -18,6 +18,7 @@ import events.IMessageSentInterface;
 import terminals.NucleusEvents;
 
 import abstractions.IDeviceInterface;
+import abstractions.IRefundResponse;
 import abstractions.ISaleResponse;
 
 import entities.enums.ConnectionModes;
@@ -57,6 +58,21 @@ public class DemoPlugin extends CordovaPlugin {
             JSONObject obj = new JSONObject(param);
             String _baseAmount = obj.getString("_sBaseAmount");
             this.saleTransaction(_baseAmount, callbackContext);
+            return true;
+        }
+        if(action.equals("saleTransactionWithTip")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _baseAmount = obj.getString("_sBaseAmount");
+            String _tipAmount = obj.getString("_sTipAmount");
+            this.saleTransactionWithTip(_baseAmount, _tipAmount, callbackContext);
+            return true;
+        }
+        if(action.equals("refundTransaction")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _baseAmount = obj.getString("_sBaseAmount");
+            this.refundTransaction(_baseAmount, callbackContext);
             return true;
         }
         return false;
@@ -108,7 +124,35 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success("Sent successfully");
+            callbackContext.success("Sale Transaction Executed Successfully");
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    private void saleTransactionWithTip(String _baseAmount, String _tipAmount, CallbackContext callbackContext) {
+        if(!this._isConnected) {
+            callbackContext.error("Not connected");
+            return;
+        }
+        try {
+            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).WithTipAmount(new BigDecimal(_tipAmount)).execute();
+            this._requestId ++;
+            callbackContext.success("Sale + Tip Transaction Executed Successfully");
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    private void refundTransaction(String _baseAmount, CallbackContext callbackContext) {
+        if(!this._isConnected) {
+            callbackContext.error("Not connected");
+            return;
+        }
+        try {
+            IRefundResponse response = _device.refund(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            this._requestId ++;
+            callbackContext.success("Refund Transaction Executed Successfully");
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }

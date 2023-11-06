@@ -11,3 +11,11 @@ exports.initializeConnection = function(arg0, success, error) {
 exports.saleTransaction = function(arg0, success, error) {
     exec(success, error, 'DemoPlugin', 'saleTransaction', [arg0]);
 }
+
+exports.saleTransactionWithTip = function(args, success, error) {
+    exec(success, error, "DemoPlugin", 'saleTransactionWithTip', [args]);
+}
+
+exports.refundTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'refundTransaction', [args]);
+}
