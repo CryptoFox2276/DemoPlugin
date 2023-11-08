@@ -1,7 +1,7 @@
 {
   "name": "demoplugin",
   "version": "0.0.1",
-  "description": "",
+  "description": "This is customized cordova plugin for upa integration",
   "cordova": {
     "id": "demoplugin",
     "platforms": [
