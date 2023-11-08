@@ -85,6 +85,35 @@ public class DemoPlugin extends CordovaPlugin {
             this.voidTransaction(_transactionID, callbackContext);
             return true;
         }
+        if(action.equals("preAuthTransaction")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _amount = obj.getString("_sBaseAmount");
+            this.preAuthTransaction(_amount, callbackContext);
+            return true;
+        }
+        if(action.equals("deletePreAuthTransaction")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _referenceNumber = obj.getString("_sReferenceNumber");
+            this.deletePreAuthTransaction(_referenceNumber, callbackContext);
+            return true;
+        }
+        if(action.equals("authCompletionTransaction")) {
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _amount = obj.getString("_sBaseAmount");
+            this.preAuthTransaction(_amount, callbackContext);
+            return true;
+        }
+        if(action.equals("cancelTranscation")) {
+            this.cancelTranscation(callbackContext);
+            return true;
+        }
+        if(action.equals("restartTransaction")) {
+            this.restartTransaction(callbackContext);
+            return true;
+        }
         return false;
     }
 
@@ -188,7 +217,7 @@ public class DemoPlugin extends CordovaPlugin {
             return;
         }
         try {
-            IPreAuthResponse response = _device.preAuth(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            IPreAuthResponse response = _device.preAuth(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
             callbackContext.success(response);
         } catch (Exception e) {

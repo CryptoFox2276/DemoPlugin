@@ -23,3 +23,23 @@ exports.refundTransaction = function(args, success, error) {
 exports.voidTransaction = function(args, success, error) {
     exec(success, error, 'DemoPlugin', 'voidTransaction', [args]);
 }
+
+exports.preAuthTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'preAuthTransaction', [args]);
+}
+
+exports.deletePreAuthTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'deletePreAuthTransaction', [args]);
+}
+
+exports.authCompletionTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'authCompletionTransaction', [args]);
+}
+
+exports.cancelTranscation = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'cancelTranscation', [args]);
+}
+
+exports.restartTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', 'restartTransaction', [args]);
+}
