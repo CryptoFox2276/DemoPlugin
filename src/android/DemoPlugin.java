@@ -163,7 +163,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -175,9 +175,9 @@ public class DemoPlugin extends CordovaPlugin {
             return;
         }
         try {
-            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).WithTipAmount(new BigDecimal(_tipAmount)).execute();
+            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -191,7 +191,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IRefundResponse response = _device.refund(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -205,7 +205,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IVoidResponse response = _device.void_(_transactionID).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -219,7 +219,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IPreAuthResponse response = _device.preAuth(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -233,7 +233,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeletePreAuthResponse response = _device.deletePreAuth(_referenceNumber).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -247,7 +247,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IAuthCompletionResponse response = _device.authCompletion(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -261,7 +261,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeviceResponse response = _device.cancel().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -275,7 +275,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeviceResponse response = _device.restart().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response);
+            callbackContext.success(response.getMultipleMessage());
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
