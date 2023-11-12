@@ -19,6 +19,7 @@ import terminals.NucleusEvents;
 
 import abstractions.IAuthCompletionResponse;
 import abstractions.IDeletePreAuthResponse;
+import abstractions.IMailOrderResponse;
 import abstractions.IPreAuthResponse;
 import abstractions.IDeviceInterface;
 import abstractions.IRefundResponse;
@@ -60,7 +61,8 @@ public class DemoPlugin extends CordovaPlugin {
             String param = args.getString(0);
             JSONObject obj = new JSONObject(param);
             String _baseAmount = obj.getString("_sBaseAmount");
-            this.saleTransaction(_baseAmount, callbackContext);
+            String _tipAmount = obj.getString("_sTipAmount");
+            this.saleTransaction(_baseAmount, _tipAmount, callbackContext);
             return true;
         }
         if(action.equals("saleTransactionWithTip")) {
@@ -103,11 +105,18 @@ public class DemoPlugin extends CordovaPlugin {
             String param = args.getString(0);
             JSONObject obj = new JSONObject(param);
             String _amount = obj.getString("_sBaseAmount");
-            this.preAuthTransaction(_amount, callbackContext);
+            String _tip = obj.getString("_sTipAmount");
+            this.authCompletionTransaction(_amount, _tip, callbackContext);
             return true;
         }
-        if(action.equals("cancelTranscation")) {
-            this.cancelTranscation(callbackContext);
+        if(action.equals("mailOrderTransaction")) {
+          String param = args.getString(0);
+          JSONObject obj = new JSONObject(param);
+          String _amount = obj.getString("_sBaseAmount");
+          this.mailOrderTransaction(_amount, callbackContext);
+        }
+        if(action.equals("cancelTransaction")) {
+            this.cancelTransaction(callbackContext);
             return true;
         }
         if(action.equals("restartTransaction")) {
@@ -127,6 +136,10 @@ public class DemoPlugin extends CordovaPlugin {
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
         try {
+            if(this._isConnected) {
+              callbackContext.success("Connected already");
+              return;
+            }
             ConnectionConfig config = new ConnectionConfig();
             config.setConnectionMode(ConnectionModes.TCP_IP);
             config.setPort(port);
@@ -155,15 +168,18 @@ public class DemoPlugin extends CordovaPlugin {
         });
     }
 
-    private void saleTransaction(String _baseAmount, CallbackContext callbackContext) {
+    private void saleTransaction(String _baseAmount, String _tipAmount, CallbackContext callbackContext) {
         if(!this._isConnected) {
             callbackContext.error("Not connected");
             return;
         }
         try {
-            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -177,7 +193,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -191,7 +210,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IRefundResponse response = _device.refund(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -205,7 +227,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IVoidResponse response = _device.void_(_transactionID).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -219,7 +244,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IPreAuthResponse response = _device.preAuth(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -233,27 +261,50 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeletePreAuthResponse response = _device.deletePreAuth(_referenceNumber).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
     }
 
-    private void authCompletionTransaction(String _amount, CallbackContext callbackContext) {
+    private void authCompletionTransaction(String _baseAmount, String _tipAmount, CallbackContext callbackContext) {
         if(!this._isConnected) {
             callbackContext.error("Not connected");
             return;
         }
         try {
-            IAuthCompletionResponse response = _device.authCompletion(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            IAuthCompletionResponse response = _device.authCompletion(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            JSONObject r = new JSONObject();
+            r.put("tranNo", response.getHost().getTransactionNumber());
+            r.put("referenceNumber", response.getHost().getReferenceNumber());
+            callbackContext.success(r);
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
     }
 
-    private void cancelTranscation(CallbackContext callbackContext) {
+    private void mailOrderTransaction(String _amount, CallbackContext callbackContext) {
+      if(!this._isConnected) {
+        callbackContext.error("Not connected");
+        return;
+      }
+      try {
+        IMailOrderResponse response = _device.mailOrder(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+        this._requestId ++;
+        JSONObject r = new JSONObject();
+        r.put("tranNo", response.getHost().getTransactionNumber());
+        r.put("referenceNumber", response.getHost().getReferenceNumber());
+        callbackContext.success(r);
+      } catch (Exception e) {
+        callbackContext.error(e.getMessage());
+      }
+    }
+
+    private void cancelTransaction(CallbackContext callbackContext) {
         if(!this._isConnected) {
             callbackContext.error("Not connected");
             return;
@@ -261,7 +312,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeviceResponse response = _device.cancel().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            callbackContext.success("Canceled");
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
@@ -275,7 +326,7 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeviceResponse response = _device.restart().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
-            callbackContext.success(response.getMultipleMessage());
+            callbackContext.success("Restarted");
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
