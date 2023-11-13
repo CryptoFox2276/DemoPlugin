@@ -106,7 +106,8 @@ public class DemoPlugin extends CordovaPlugin {
             JSONObject obj = new JSONObject(param);
             String _amount = obj.getString("_sBaseAmount");
             String _tip = obj.getString("_sTipAmount");
-            this.authCompletionTransaction(_amount, _tip, callbackContext);
+            String _referenceNumber = obj.getString("_sReferenceNumber");
+            this.authCompletionTransaction(_amount, _tip, _referenceNumber, callbackContext);
             return true;
         }
         if(action.equals("mailOrderTransaction")) {
@@ -136,7 +137,7 @@ public class DemoPlugin extends CordovaPlugin {
 
     private void initializeConnection(String ip, String port, CallbackContext callbackContext) {
         try {
-            if(this._isConnected) {
+            if(this._device != null) {
               callbackContext.success("Connected already");
               return;
             }
@@ -176,6 +177,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -193,6 +198,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             ISaleResponse response = this._device.sale(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -210,6 +219,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IRefundResponse response = _device.refund(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -227,6 +240,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IVoidResponse response = _device.void_(_transactionID).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -244,6 +261,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IPreAuthResponse response = _device.preAuth(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -261,6 +282,10 @@ public class DemoPlugin extends CordovaPlugin {
         try {
             IDeletePreAuthResponse response = _device.deletePreAuth(_referenceNumber).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -270,14 +295,18 @@ public class DemoPlugin extends CordovaPlugin {
         }
     }
 
-    private void authCompletionTransaction(String _baseAmount, String _tipAmount, CallbackContext callbackContext) {
+    private void authCompletionTransaction(String _baseAmount, String _tipAmount, String _referenceNumber, CallbackContext callbackContext) {
         if(!this._isConnected) {
             callbackContext.error("Not connected");
             return;
         }
         try {
-            IAuthCompletionResponse response = _device.authCompletion(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).execute();
+            IAuthCompletionResponse response = _device.authCompletion(new BigDecimal(_baseAmount)).withRequestId(this._requestId).withEcrId(this._ecrId).withTipAmount(new BigDecimal(_tipAmount)).withReferenceNumber(_referenceNumber).execute();
             this._requestId ++;
+            if(response.getErrorCode() != null) {
+              callbackContext.error(response.getErrorMessage());
+              return;
+            }
             JSONObject r = new JSONObject();
             r.put("tranNo", response.getHost().getTransactionNumber());
             r.put("referenceNumber", response.getHost().getReferenceNumber());
@@ -295,6 +324,10 @@ public class DemoPlugin extends CordovaPlugin {
       try {
         IMailOrderResponse response = _device.mailOrder(new BigDecimal(_amount)).withRequestId(this._requestId).withEcrId(this._ecrId).execute();
         this._requestId ++;
+        if(response.getErrorCode() != null) {
+          callbackContext.error(response.getErrorMessage());
+          return;
+        }
         JSONObject r = new JSONObject();
         r.put("tranNo", response.getHost().getTransactionNumber());
         r.put("referenceNumber", response.getHost().getReferenceNumber());
