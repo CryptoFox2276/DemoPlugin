@@ -115,6 +115,11 @@ public class DemoPlugin extends CordovaPlugin {
           JSONObject obj = new JSONObject(param);
           String _amount = obj.getString("_sBaseAmount");
           this.mailOrderTransaction(_amount, callbackContext);
+          return true;
+        }
+        if(action.equals("batchCloseTransaction")) {
+            this.batchCloseTransaction();
+            return true;            
         }
         if(action.equals("cancelTransaction")) {
             this.cancelTransaction(callbackContext);
@@ -360,6 +365,20 @@ public class DemoPlugin extends CordovaPlugin {
             IDeviceResponse response = _device.restart().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
             this._requestId ++;
             callbackContext.success("Restarted");
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
+    }
+
+    private void batchCloseTransaction(CallbackContext callbackContext) {
+        if(!this._isConnected) {
+            callbackContext.error("Not connected");
+            return;
+        }
+        try {
+            IEODResponse response = _device.eodProcessing().withRequestId(this._requestId).withEcrId(this._ecrId).execute();
+            this._requestId ++;
+            callbackContext.success("eodProcessed");
         } catch (Exception e) {
             callbackContext.error(e.getMessage());
         }
