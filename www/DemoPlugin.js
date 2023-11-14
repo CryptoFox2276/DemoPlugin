@@ -47,3 +47,7 @@ exports.restartTransaction = function(args, success, error) {
 exports.mailOrderTransaction = function(args, success, error) {
     exec(success, error, 'DemoPlugin', 'mailOrderTransaction', [args]);
 }
+
+exports.batchCloseTransaction = function(args, success, error) {
+    exec(success, error, 'DemoPlugin', batchCloseTransaction, [args]);
+}
