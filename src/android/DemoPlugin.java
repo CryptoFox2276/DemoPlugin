@@ -118,7 +118,10 @@ public class DemoPlugin extends CordovaPlugin {
           return true;
         }
         if(action.equals("batchCloseTransaction")) {
-            this.batchCloseTransaction();
+            String param = args.getString(0);
+            JSONObject obj = new JSONObject(param);
+            String _amount = obj.getString("_sBaseAmount");
+            this.batchCloseTransaction(_amount, callbackContext);
             return true;            
         }
         if(action.equals("cancelTransaction")) {
