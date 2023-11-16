@@ -26,6 +26,7 @@ import abstractions.IRefundResponse;
 import abstractions.IDeviceResponse;
 import abstractions.ISaleResponse;
 import abstractions.IVoidResponse;
+import abstractions.IEODResponse;
 
 import entities.enums.ConnectionModes;
 
